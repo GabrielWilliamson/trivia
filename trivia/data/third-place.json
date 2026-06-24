@@ -1,0 +1,44 @@
+{
+  "leagueCode": "fifa.world",
+  "leagueName": "FIFA World Cup",
+  "stage": "Third Place",
+  "fetchedAt": "2026-06-24T12:00:00+00:00",
+  "count": 1,
+  "matches": [
+    {
+      "id": "760516",
+      "leagueCode": "fifa.world",
+      "leagueName": "FIFA World Cup",
+      "date": "2026-07-18T21:00Z",
+      "stage": "Third Place",
+      "status": "scheduled",
+      "state": "pre",
+      "minute": "",
+      "detail": "Scheduled",
+      "clockSeconds": 0,
+      "clockUpdatedAt": null,
+      "clockRunning": false,
+      "inPenalties": false,
+      "venue": {
+        "name": "Hard Rock Stadium",
+        "city": "Miami Gardens, Florida",
+        "country": "USA"
+      },
+      "bracketNote": "Semifinal 1 Loser v Semifinal 2 Loser",
+      "home": {
+        "id": "5980",
+        "name": "Semifinal 1 Loser",
+        "abbreviation": "SFL1",
+        "score": null,
+        "logo": ""
+      },
+      "away": {
+        "id": "5981",
+        "name": "Semifinal 2 Loser",
+        "abbreviation": "SFL2",
+        "score": null,
+        "logo": ""
+      }
+    }
+  ]
+}

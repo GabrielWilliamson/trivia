@@ -1,0 +1,610 @@
+{% extends "layouts/base.html" %}
+{% load trivia_tags %}
+
+{% block title %}
+Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|translate_country }}
+{% endblock %}
+
+{% block content %}
+<section class="prediction-page">
+    <div class="prediction-card">
+        <p class="">{{ match.stage|translate_stage }}</p>
+
+        {% if existing %}
+
+        {% if saved %}
+        <div class="success-banner">
+            ¡Predicción guardada! Ya no puedes modificarla.
+        </div>
+        {% elif already_saved %}
+        <div class="locked-banner">
+            <span class="locked-icon">🔒</span>
+            <span>Ya tienes una predicción registrada para este partido. <strong>No es posible
+                    modificarla.</strong></span>
+        </div>
+        {% endif %}
+
+        <div class="readonly-block">
+            <p class="readonly-label">Tu predicción — <strong>{{ request.user.username }}</strong></p>
+            <div class="readonly-score">
+                <div class="rs-team">
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name|translate_country }}">
+                    <span class="team-name">{{ match.home.name|translate_country }}</span>
+                </div>
+                <span class="rs-value">{{ existing.home_score }}</span>
+                <span class="separator">–</span>
+                <span class="rs-value">{{ existing.away_score }}</span>
+                <div class="rs-team rs-team--away">
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name|translate_country }}">
+                    <span class="team-name">{{ match.away.name|translate_country }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% elif match.state == 'post' %}
+        <div class="finished-banner">
+            <span class="finished-score">
+                {{ match.home.abbreviation }} {{ match.home.score }} – {{ match.away.score }}
+                {{ match.away.abbreviation }}
+            </span>
+            <span class="finished-label">Este partido ya finalizó. No se pueden crear predicciones.</span>
+        </div>
+
+        {% elif match.state == 'in' %}
+        <div class="live-banner">
+            <span class="live-dot"></span>
+            <span class="live-score">
+                {{ match.home.abbreviation }} {{ match.home.score }} – {{ match.away.score }}
+                {{ match.away.abbreviation }}
+            </span>
+            <span class="live-label">Partido en juego. No se pueden crear predicciones.</span>
+        </div>
+
+        {% elif not match.teamsConfirmed %}
+        <div class="tbd-banner">
+
+            Equipos por definir
+        </div>
+
+        {% else %}
+
+
+
+        {% if error %}
+        <div class="error-banner">{{ error }}</div>
+        {% endif %}
+
+        <p class="readonly-label">Prediciendo como <strong>{{ request.user.username }}</strong></p>
+
+        <form class="prediction-form" method="post">
+            {% csrf_token %}
+
+            <div class="teams">
+                <div class="team-block team-block--home">
+                    <span class="team-name">{{ match.home.name|translate_country }}</span>
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name|translate_country }}">
+                    <input class="score-input" type="number" name="home_score" min="0" max="99" placeholder="0"
+                        required>
+                </div>
+
+                <span class="separator">–</span>
+
+                <div class="team-block team-block--away">
+                    <input class="score-input" type="number" name="away_score" min="0" max="99" placeholder="0"
+                        required>
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name|translate_country }}">
+                    <span class="team-name">{{ match.away.name|translate_country }}</span>
+                </div>
+            </div>
+
+            <button class="submit-btn" type="submit">Guardar predicción</button>
+        </form>
+
+
+        <div class="info-box">
+            <p class="info-title">¿Cómo funciona?</p>
+            <ul class="info-list">
+                <li>Ingresa cuántos goles crees que marcará cada equipo.</li>
+                <li>Los goles cuentan en <strong>tiempo normal o suplementario</strong>.</li>
+                <li><strong>Los penales no cuentan</strong> — si el partido se define en penales, se usa el marcador al
+                    final del tiempo suplementario.</li>
+            </ul>
+            <div class="scoring-rules">
+                <p class="scoring-title">Puntuación</p>
+                <div class="rule"><span class="pts pts--5">5 pts</span> Marcador exacto <em>(ej. predijiste 2–1 y fue
+                        2–1)</em></div>
+                <div class="rule"><span class="pts pts--2">2 pts</span> Ganador o empate correcto <em>(resultado bien,
+                        marcador diferente)</em></div>
+                <div class="rule"><span class="pts pts--0">0 pts</span> Resultado incorrecto</div>
+            </div>
+        </div>
+
+
+
+
+
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .prediction-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+        gap: 24px;
+        padding: 32px 16px;
+        font-family: sans-serif;
+    }
+
+    .prediction-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 36px 40px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        width: 100%;
+        max-width: 560px;
+    }
+
+
+    /* Match header */
+    .match-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .mh-team {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+    }
+
+    .mh-flag {
+        width: 44px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .mh-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1a1a2e;
+        text-align: center;
+        max-width: 100px;
+        line-height: 1.2;
+    }
+
+    .mh-vs {
+        font-size: 13px;
+        font-weight: 700;
+        color: #cbd5e1;
+        flex-shrink: 0;
+    }
+
+    /* Info box */
+    .info-box {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 10px;
+        padding: 16px 20px;
+        width: 100%;
+        font-size: 13px;
+        color: #0c4a6e;
+    }
+
+    .info-title {
+        margin: 0 0 8px;
+        font-weight: 700;
+        font-size: 13px;
+        color: #0369a1;
+    }
+
+    .info-list {
+        margin: 0 0 12px;
+        padding-left: 18px;
+        line-height: 1.6;
+    }
+
+    .info-list li {
+        margin-bottom: 2px;
+    }
+
+    .scoring-rules {
+        border-top: 1px solid #bae6fd;
+        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .scoring-title {
+        margin: 0 0 6px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #0369a1;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .rule {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .rule em {
+        color: #64748b;
+        font-style: normal;
+    }
+
+    .pts {
+        flex-shrink: 0;
+        font-size: 11px;
+        font-weight: 800;
+        border-radius: 5px;
+        padding: 2px 6px;
+        min-width: 36px;
+        text-align: center;
+    }
+
+    .pts--5 {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .pts--3 {
+        background: #fef9c3;
+        color: #713f12;
+    }
+
+    .pts--2 {
+        background: #e0f2fe;
+        color: #0c4a6e;
+    }
+
+    .pts--0 {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    /* Banners */
+    .success-banner {
+        background: #d1fae5;
+        color: #065f46;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+    }
+
+    .locked-banner {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 13px;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .locked-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .error-banner {
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Read-only prediction */
+    .readonly-block {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .readonly-label {
+        margin: 0;
+        font-size: 12px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .readonly-score {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .rs-team {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+        align-items: flex-end;
+    }
+
+    .rs-team--away {
+        align-items: flex-start;
+    }
+
+    .rs-value {
+        font-size: 44px;
+        font-weight: 800;
+        color: #1a1a2e;
+        line-height: 1;
+        min-width: 52px;
+        text-align: center;
+    }
+
+    /* Form */
+    .prediction-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        width: 100%;
+    }
+
+    .username-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .username-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .username-input {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 15px;
+        font-weight: 600;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        color: #1a1a2e;
+        background: #f8fafc;
+        outline: none;
+        transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+        box-sizing: border-box;
+    }
+
+    .username-input:focus {
+        border-color: #005d7d;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(0, 93, 125, 0.12);
+    }
+
+    .teams {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .team-block {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+
+    .team-block--home {
+        justify-content: flex-end;
+    }
+
+    .team-block--away {
+        justify-content: flex-start;
+    }
+
+    .flag {
+        width: 48px;
+        height: 34px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        flex-shrink: 0;
+    }
+
+    .team-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1a1a2e;
+        text-align: center;
+        max-width: 90px;
+        line-height: 1.2;
+    }
+
+    .score-input {
+        width: 68px;
+        height: 68px;
+        text-align: center;
+        font-size: 34px;
+        font-weight: 800;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        color: #1a1a2e;
+        background: #f8fafc;
+        outline: none;
+        transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+        flex-shrink: 0;
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+
+    .score-input::-webkit-outer-spin-button,
+    .score-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .score-input:focus {
+        border-color: #005d7d;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(0, 93, 125, 0.12);
+    }
+
+    .separator {
+        font-size: 28px;
+        font-weight: 800;
+        color: #cbd5e1;
+        flex-shrink: 0;
+        line-height: 1;
+    }
+
+    .submit-btn {
+        background: #005d7d;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 14px 40px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.04em;
+        transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .submit-btn:hover {
+        background: #004a63;
+        transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .tbd-banner {
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+        border-radius: 10px;
+        padding: 20px 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        width: 100%;
+        color: #4c1d95;
+    }
+
+
+    /* Finished banner */
+    .finished-banner {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 20px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .finished-score {
+        font-size: 22px;
+        font-weight: 800;
+        color: #1a1a2e;
+        letter-spacing: 0.04em;
+    }
+
+    .finished-label {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    /* Live banner */
+    .live-banner {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        border-radius: 10px;
+        padding: 20px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .live-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ef4444;
+        animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .live-score {
+        font-size: 22px;
+        font-weight: 800;
+        color: #9a3412;
+        letter-spacing: 0.04em;
+    }
+
+    .live-label {
+        font-size: 13px;
+        color: #c2410c;
+        font-weight: 500;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(0.85);
+        }
+    }
+</style>
+{% endblock %}

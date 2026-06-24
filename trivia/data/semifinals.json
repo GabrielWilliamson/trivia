@@ -1,0 +1,79 @@
+{
+  "leagueCode": "fifa.world",
+  "leagueName": "FIFA World Cup",
+  "stage": "Semifinals",
+  "fetchedAt": "2026-06-24T12:00:00+00:00",
+  "count": 2,
+  "matches": [
+    {
+      "id": "760514",
+      "leagueCode": "fifa.world",
+      "leagueName": "FIFA World Cup",
+      "date": "2026-07-14T19:00Z",
+      "stage": "Semifinals",
+      "status": "scheduled",
+      "state": "pre",
+      "minute": "",
+      "detail": "Scheduled",
+      "clockSeconds": 0,
+      "clockUpdatedAt": null,
+      "clockRunning": false,
+      "inPenalties": false,
+      "venue": {
+        "name": "AT&T Stadium",
+        "city": "Arlington, Texas",
+        "country": "USA"
+      },
+      "bracketNote": "QF Match 1 Winner v QF Match 2 Winner",
+      "home": {
+        "id": "5970",
+        "name": "QF Match 1 Winner",
+        "abbreviation": "TBD",
+        "score": null,
+        "logo": ""
+      },
+      "away": {
+        "id": "5971",
+        "name": "QF Match 2 Winner",
+        "abbreviation": "TBD",
+        "score": null,
+        "logo": ""
+      }
+    },
+    {
+      "id": "760515",
+      "leagueCode": "fifa.world",
+      "leagueName": "FIFA World Cup",
+      "date": "2026-07-15T19:00Z",
+      "stage": "Semifinals",
+      "status": "scheduled",
+      "state": "pre",
+      "minute": "",
+      "detail": "Scheduled",
+      "clockSeconds": 0,
+      "clockUpdatedAt": null,
+      "clockRunning": false,
+      "inPenalties": false,
+      "venue": {
+        "name": "Mercedes-Benz Stadium",
+        "city": "Atlanta, Georgia",
+        "country": "USA"
+      },
+      "bracketNote": "QF Match 3 Winner v QF Match 4 Winner",
+      "home": {
+        "id": "5972",
+        "name": "QF Match 3 Winner",
+        "abbreviation": "TBD",
+        "score": null,
+        "logo": ""
+      },
+      "away": {
+        "id": "5973",
+        "name": "QF Match 4 Winner",
+        "abbreviation": "TBD",
+        "score": null,
+        "logo": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
+<section class="standings">
+    <div class="parent">
+        <div class="round-of-32 div1">
+            {% include "components/match.html" with id="760489" stage="round-of-32" %} {# M74 #}
+        </div>
+        <div class="round-of-32 div2">
+            {% include "components/match.html" with id="760492" stage="round-of-32" %} {# M77 #}
+        </div>
+        <div class="round-of-32 div3">
+            {% include "components/match.html" with id="760486" stage="round-of-32" %} {# M73 #}
+        </div>
+        <div class="round-of-32 div4">
+            {% include "components/match.html" with id="760488" stage="round-of-32" %} {# M75 #}
+        </div>
+        <div class="round-of-32 div5">
+            {% include "components/match.html" with id="760496" stage="round-of-32" %} {# M83 #}
+        </div>
+        <div class="round-of-32 div6">
+            {% include "components/match.html" with id="760497" stage="round-of-32" %} {# M84 #}
+        </div>
+        <div class="round-of-32 div7">
+            {% include "components/match.html" with id="760494" stage="round-of-32" %} {# M81 #}
+        </div>
+        <div class="round-of-32 div8">
+            {% include "components/match.html" with id="760493" stage="round-of-32" %} {# M82 #}
+        </div>
+        <div class="round-of-16 div9">
+            {% include "components/match.html" with id="760502" stage="round-of-16" %} {# M89 #}
+        </div>
+        <div class="round-of-16 div10">
+            {% include "components/match.html" with id="760503" stage="round-of-16" %} {# M90 #}
+        </div>
+        <div class="round-of-16 div11">
+            {% include "components/match.html" with id="760506" stage="round-of-16" %} {# M93 #}
+        </div>
+        <div class="round-of-16 div12">
+            {% include "components/match.html" with id="760507" stage="round-of-16" %} {# M94 #}
+        </div>
+        <div class="quarter-final div13">
+            {% include "components/match.html" with id="760510" stage="quarter-final" %} {# M97 #}
+        </div>
+        <div class="quarter-final div14">
+            {% include "components/match.html" with id="760511" stage="quarter-final" %} {# M98 #}
+        </div>
+        <div class="semifinal div15">
+            {% include "components/match.html" with id="760514" stage="semifinal" %} {# M101#}
+        </div>
+        <div class="final div16">
+            {% include "components/match.html" with id="760517" stage="final" %} {# M104 #}
+        </div>
+        <div class="semifinal div17">
+            {% include "components/match.html" with id="760515" stage="semifinal" %} {# M102#}
+        </div>
+        <div class="quarter-final div18">
+            {% include "components/match.html" with id="760512" stage="quarter-final" %} {# M99 #}
+        </div>
+        <div class="quarter-final div19">
+            {% include "components/match.html" with id="760513" stage="quarter-final" %} {# M100 #}
+        </div>
+        <div class="round-of-16 div20">
+            {% include "components/match.html" with id="760504" stage="round-of-16" %} {# M91 #}
+        </div>
+        <div class="round-of-16 div21">
+            {% include "components/match.html" with id="760505" stage="round-of-16" %} {# M92 #}
+        </div>
+        <div class="round-of-16 div22">
+            {% include "components/match.html" with id="760509" stage="round-of-16" %} {# M95 #}
+        </div>
+        <div class="round-of-16 div23">
+            {% include "components/match.html" with id="760508" stage="round-of-16" %} {# M96 #}
+        </div>
+        <div class="round-of-32 div24">
+            {% include "components/match.html" with id="760487" stage="round-of-32" %} {# M76 #}
+        </div>
+        <div class="round-of-32 div25">
+            {% include "components/match.html" with id="760490" stage="round-of-32" %} {# M78 #}
+        </div>
+        <div class="round-of-32 div26">
+            {% include "components/match.html" with id="760491" stage="round-of-32" %} {# M79 #}
+        </div>
+        <div class="round-of-32 div27">
+            {% include "components/match.html" with id="760495" stage="round-of-32" %} {# M80 #}
+        </div>
+        <div class="round-of-32 div28">
+            {% include "components/match.html" with id="760500" stage="round-of-32" %} {# M86 #}
+        </div>
+        <div class="round-of-32 div29">
+            {% include "components/match.html" with id="760499" stage="round-of-32" %} {# M88 #}
+        </div>
+        <div class="round-of-32 div30">
+            {% include "components/match.html" with id="760498" stage="round-of-32" %} {# M85 #}
+        </div>
+        <div class="round-of-32 div31">
+            {% include "components/match.html" with id="760501" stage="round-of-32" %} {# M87 #}
+        </div>
+    </div>
+</section>
+
+<section class="lb-page">
+    <div class="lb-card">
+        <h1 class="lb-title">Tabla de posiciones</h1>
+
+        {% if leaderboard %}
+        <div class="table-wrap">
+            <table class="lb-table">
+                <thead>
+                    <tr>
+                        <th class="col-rank">#</th>
+                        <th class="col-user">Usuario</th>
+                        <th class="col-pts">Pts</th>
+                        <th class="col-stat" title="Marcador exacto">Exactos</th>
+                        <th class="col-stat" title="Resultado correcto">Result.</th>
+                        <th class="col-stat" title="Partidos evaluados / predichos">Jugados</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in leaderboard %}
+                    <tr class="{% if forloop.first %}row--first{% endif %}">
+                        <td class="col-rank">
+                            {% if forloop.counter == 1 %}
+                            <span class="medal medal--1">1</span>
+                            {% elif forloop.counter == 2 %}
+                            <span class="medal medal--2">2</span>
+                            {% elif forloop.counter == 3 %}
+                            <span class="medal medal--3">3</span>
+                            {% else %}
+                            <span class="rank-num">{{ forloop.counter }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="col-user"><span class="username">{{ user.username }}</span></td>
+                        <td class="col-pts"><strong class="points">{{ user.points }}</strong></td>
+                        <td class="col-stat">
+                            <span class="stat-val {% if user.exact > 0 %}stat--exact{% endif %}">{{ user.exact }}
+                            </span>
+                        </td>
+                        <td class="col-stat"><span class="stat-val {% if user.result > 0 %}stat--result{% endif %}">
+                                {{ user.result }}
+                            </span></td>
+                        <td class="col-stat"><span class="stat-val">{{ user.scored }}/{{ user.predicted }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>Aún no hay predicciones registradas.</p>
+            <p class="empty-sub">Ingresa a un partido desde el cuadro y registra tu predicción.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+
+{% endblock %}

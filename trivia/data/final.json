@@ -1,0 +1,44 @@
+{
+  "leagueCode": "fifa.world",
+  "leagueName": "FIFA World Cup",
+  "stage": "Final",
+  "fetchedAt": "2026-06-24T12:00:00+00:00",
+  "count": 1,
+  "matches": [
+    {
+      "id": "760517",
+      "leagueCode": "fifa.world",
+      "leagueName": "FIFA World Cup",
+      "date": "2026-07-19T19:00Z",
+      "stage": "Final",
+      "status": "scheduled",
+      "state": "pre",
+      "minute": "",
+      "detail": "Scheduled",
+      "clockSeconds": 0,
+      "clockUpdatedAt": null,
+      "clockRunning": false,
+      "inPenalties": false,
+      "venue": {
+        "name": "MetLife Stadium",
+        "city": "East Rutherford, New Jersey",
+        "country": "USA"
+      },
+      "bracketNote": "Semifinal 1 Winner v Semifinal 2 Winner",
+      "home": {
+        "id": "5960",
+        "name": "Semifinal 1 Winner",
+        "abbreviation": "SFW1",
+        "score": null,
+        "logo": ""
+      },
+      "away": {
+        "id": "5961",
+        "name": "Semifinal 2 Winner",
+        "abbreviation": "SFW2",
+        "score": null,
+        "logo": ""
+      }
+    }
+  ]
+}

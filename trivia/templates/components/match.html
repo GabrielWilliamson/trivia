@@ -1,0 +1,200 @@
+{% load trivia_tags %}
+{% with match=matches|get_match:id %}
+<a class="match match--{{ stage }}{% if match.state == 'post' %} match--played{% endif %}{% if match.state == 'in' %} match--live{% endif %}" href="/prediction/{{ id }}">
+
+    {% if predictions|has_prediction:id %}
+    <span class="match__star">★</span>
+    {% endif %}
+
+    {% if match.home.name and match.home.logo %}
+    <div class="team{% if match.state == 'post' and match.inPenalties and match.home.shootoutScore|gt:match.away.shootoutScore %} team--winner{% elif match.state == 'post' and not match.inPenalties and match.home.score|gt:match.away.score %} team--winner{% elif match.state == 'post' %} team--loser{% endif %}">
+        <img src="{{ match.home.logo }}" alt="{{ match.home.name }}" title="{{ match.home.name }}">
+        <span class="team__abbr">{{ match.home.abbreviation }}</span>
+        {% if match.state == 'post' %}
+        <span class="team__score">{{ match.home.score }}{% if match.inPenalties %}<span class="team__pen">({{ match.home.shootoutScore }})</span>{% endif %}</span>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="team team--tbd">
+        <div class="skeleton skeleton--flag"></div>
+        <div class="skeleton skeleton--name"></div>
+    </div>
+    {% endif %}
+
+    {% if match.inPenalties %}
+    <div class="match__badge--pen">PEN</div>
+    {% endif %}
+
+    {% if match.away.name and match.away.logo %}
+    <div class="team{% if match.state == 'post' and match.inPenalties and match.away.shootoutScore|gt:match.home.shootoutScore %} team--winner{% elif match.state == 'post' and not match.inPenalties and match.away.score|gt:match.home.score %} team--winner{% elif match.state == 'post' %} team--loser{% endif %}">
+        <img src="{{ match.away.logo }}" alt="{{ match.away.name }}" title="{{ match.away.name }}">
+        <span class="team__abbr">{{ match.away.abbreviation }}</span>
+        {% if match.state == 'post' %}
+        <span class="team__score">{{ match.away.score }}{% if match.inPenalties %}<span class="team__pen">({{ match.away.shootoutScore }})</span>{% endif %}</span>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="team team--tbd">
+        <div class="skeleton skeleton--flag"></div>
+        <div class="skeleton skeleton--name"></div>
+    </div>
+    {% endif %}
+</a>
+{% endwith %}
+
+<style>
+    .match {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+        gap: 3px;
+        padding: 5px 8px;
+        text-decoration: none;
+        cursor: pointer;
+        color: #ffffff;
+        transition: filter 0.15s ease, transform 0.15s ease;
+    }
+
+    .match:hover {
+        filter: brightness(1.12);
+        transform: scale(1.03);
+    }
+
+    .match--round-of-32 {
+        background: #005d7d;
+        width: 140px;
+        min-height: 60px;
+    }
+
+    .match--round-of-16 {
+        background: #1c81a9;
+        width: 140px;
+        min-height: 60px;
+    }
+
+    .match--quarter-final {
+        background: #37a7d6;
+        width: 140px;
+        min-height: 60px;
+    }
+
+    .match--semifinal {
+        background: #48c2f6;
+        width: 140px;
+        min-height: 60px;
+    }
+
+    .match--final {
+        background: #1c81a9;
+        width: 280px;
+        min-height: 60px;
+    }
+
+    .match .team {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .match .team img {
+        width: 26px;
+        height: 18px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .match .team__abbr {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.95);
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    .match .team__score {
+        font-size: 14px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        flex-shrink: 0;
+    }
+
+    .match .team__pen {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.70);
+        letter-spacing: 0;
+    }
+
+    .match .team--winner .team__abbr {
+        color: #ffffff;
+    }
+
+    .match .team--winner .team__score {
+        color: #ffffff;
+    }
+
+    .match .team--loser {
+        opacity: 0.55;
+    }
+
+    .match__badge--pen {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #ffffff;
+        text-align: center;
+        line-height: 1;
+        margin: 0 auto;
+    }
+
+    .match__star {
+        position: absolute;
+        top: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 10px;
+        line-height: 1;
+        color: #FFD700;
+        pointer-events: none;
+    }
+
+    .match .team--tbd {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .skeleton {
+        border-radius: 3px;
+        background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.10) 25%,
+                rgba(255, 255, 255, 0.28) 50%,
+                rgba(255, 255, 255, 0.10) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite linear;
+    }
+
+    .skeleton--flag {
+        width: 26px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .skeleton--name {
+        width: 44px;
+        height: 10px;
+    }
+</style>

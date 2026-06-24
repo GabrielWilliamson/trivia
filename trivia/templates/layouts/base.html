@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trivia{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+    <nav class="site-nav">
+        {% if user.is_authenticated %}
+        <span class="nav-user">{{ user.username }}</span>
+        {% else %}
+        <a href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
+    </nav>
+    {% block content %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Iniciar sesión — Trivia Mundial 2026{% endblock %}
+
+{% block content %}
+<section class="login-page">
+    <div class="login-card">
+        <h1 class="login-title">Iniciar sesión</h1>
+
+        {% if form.errors %}
+        <div class="error-banner">Usuario o contraseña incorrectos. Inténtalo de nuevo.</div>
+        {% endif %}
+
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <div class="field-group">
+                <label class="field-label" for="id_username">Usuario</label>
+                <input id="id_username" class="field-input" type="text" name="username" autofocus
+                    autocomplete="username" required>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="id_password">Contraseña</label>
+                <input id="id_password" class="field-input" type="password" name="password"
+                    autocomplete="current-password" required>
+            </div>
+
+            <button class="submit-btn" type="submit">Entrar</button>
+        </form>
+    </div>
+</section>
+
+<style>
+    .login-page {
+        min-height: calc(100vh - 44px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+        font-family: sans-serif;
+        padding: 32px 16px;
+    }
+
+    .login-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 40px 48px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .login-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 800;
+        color: #1a1a2e;
+        text-align: center;
+    }
+
+
+    .error-banner {
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .field-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .field-input {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        color: #1a1a2e;
+        background: #f8fafc;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .field-input:focus {
+        border-color: #005d7d;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 93, 125, 0.12);
+    }
+
+    .submit-btn {
+        background: #005d7d;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.1s;
+        margin-top: 4px;
+    }
+
+    .submit-btn:hover {
+        background: #004a63;
+        transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+</style>
+{% endblock %}

@@ -1,12 +1,4 @@
-# AGENTS.md — FIFA World Cup 2026 Trivia App
-
-Guide for AI coding agents working in this repository.
-
-## Project Overview
-
-Django + Vite trivia app for the FIFA World Cup 2026 knockout stage. The backend
-serves match fixture data sourced from the ESPN public API v2. The frontend is
-plain JS/SCSS compiled by Vite; there is no React or heavy framework.
+# AGENTS.md
 
 ---
 
@@ -15,17 +7,14 @@ plain JS/SCSS compiled by Vite; there is no React or heavy framework.
 | Layer     | Technology                          |
 |-----------|-------------------------------------|
 | Backend   | Django 5, Python 3.12 (via `uv`)    |
-| Frontend  | Vite 7, Vanilla JS, SCSS (Sass)     |
 | Database  | PostgreSQL (env-configured)         |
-| CSS       | SCSS — **no Tailwind**              |
+| CSS       | CSS — **no Tailwind**              |
 | Deployment| Vercel (vercel.json present)        |
 
 ### Run commands
 
 ```bash
 uv run python manage.py <command>       # Django management commands
-npm run dev                             # Vite dev server
-npm run build                           # Vite production build
 ```
 
 ---
@@ -48,8 +37,7 @@ config/                  Django project settings (replaces old `pets/`)
   settings.py
   urls.py
 static/
-  css/main.scss          Global styles entry point
-  js/main.js             JS entry point (imports SCSS)
+  css/main.css          Global styles entry point
 ```
 
 ---
@@ -160,11 +148,6 @@ Each entry in `matches[]` follows this shape (mirrors the TypeScript
 - Add new stages to `STAGE_DATE_RANGES` in `fetch_fixtures.py` when advancing rounds
 
 **Don't:**
-- Don't add Tailwind — the project uses SCSS
+- Don't add Tailwind — the project uses CSS
 - Don't modify `dieciseisavos.json` manually; it is superseded by `round-of-32.json`
-- Don't change `config/settings.py` → `ROOT_URLCONF` back to `pets.urls`
-- Don't import from `pets.*` — that package is deleted
 
-
-solo usa vite para el sass
-evita escribir js

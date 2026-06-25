@@ -129,19 +129,13 @@ class PredictionView(LoginRequiredMixin, TemplateResponseMixin, View):
                 {"match": match, "error": "Marcadores inválidos."}
             )
 
-        pred = Prediction.objects.create(
+        Prediction.objects.create(
             match_id=match_id,
             user=request.user,
             home_score=home_score,
             away_score=away_score,
         )
-        return self.render_to_response(
-            {
-                "match": match,
-                "saved": True,
-                "existing": pred,
-            }
-        )
+        return redirect("/")
 
 
 class StandingsView(TemplateView):

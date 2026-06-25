@@ -2,6 +2,27 @@
   font-family: sans-serif;
 }
 
+.page-hero {
+  text-align: center;
+  padding: 40px 24px 32px;
+}
+
+.page-hero__title {
+  margin: 0 0 12px;
+  font-size: clamp(20px, 4vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.page-hero__desc {
+  margin: 0;
+  font-size: 15px;
+  max-width: 520px;
+  margin-inline: auto;
+  line-height: 1.6;
+}
+
 .site-nav {
   display: flex;
   align-items: center;
@@ -211,13 +232,9 @@
 
 .standings {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  justify-content: flex-start;
   background: rgb(234, 238, 241);
-  align-items: center;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 24px 16px;
 }
 
 .round-of-32 {
@@ -478,12 +495,6 @@
 
 .div40 {
   grid-column-start: 10;
-  grid-row-start: 1;
-}
-
-.div41 {
-  grid-column: span 4 / span 4;
-  grid-column-start: 4;
   grid-row-start: 1;
 }
 

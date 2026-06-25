@@ -1,10 +1,11 @@
 * {
   font-family: sans-serif;
+  /* background-color: rgb(234, 238, 241); */
 }
 
 .page-hero {
   text-align: center;
-  padding: 40px 24px 32px;
+  padding: 40px 24px 0px 24px;
 }
 
 .page-hero__title {
@@ -503,7 +504,7 @@
   font-size: 12px;
   font-weight: 500;
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: center;
   width: 100%;
 }
@@ -536,46 +537,46 @@
   justify-content: center;
   align-items: center;
   gap: 3px;
-  padding: 5px 8px;
+  padding: 4px 6px;
   text-decoration: none;
   cursor: pointer;
-  color: #ffffff;
   transition:
     filter 0.15s ease,
     transform 0.15s ease;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
 }
 
 .match:hover {
-  filter: brightness(1.12);
   transform: scale(1.03);
 }
 
 .match--round-of-32 {
-  background: #26377f;
+  background: white;
   width: 140px;
   min-height: 60px;
 }
 
 .match--round-of-16 {
-  background: #354aa7;
+  background: white;
   width: 140px;
   min-height: 60px;
 }
 
 .match--quarter-final {
-  background: #445fd1;
+  background: white;
   width: 140px;
   min-height: 60px;
 }
 
 .match--semifinal {
-  background: #687adc;
+  background: white;
   width: 140px;
   min-height: 60px;
 }
 
 .match--final {
-  background: #1c2a64;
+  background: white;
   width: 280px;
   min-height: 60px;
 }
@@ -600,22 +601,26 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.95);
-  background: none;
+  color: black;
   border: none;
   padding: 0;
   border-radius: 0;
 }
 
 .match .team__score {
+  border-radius: 2px
   font-size: 14px;
   font-weight: 800;
-  color: #ffffff;
   letter-spacing: 0.02em;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2px;
   flex-shrink: 0;
+  color: white;
+  background: #26377f;
+  width: 18px;
+  height: 18px;
 }
 
 .match .team__pen {
@@ -625,15 +630,8 @@
   letter-spacing: 0;
 }
 
-.match .team--winner .team__abbr {
-  color: #ffffff;
-}
-
-.match .team--winner .team__score {
-  color: #ffffff;
-}
-
-.match .team--loser {
+.match .team--loser img,
+.match .team--loser .team__abbr {
   opacity: 0.55;
 }
 
@@ -667,14 +665,8 @@
 
 .skeleton {
   border-radius: 3px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 25%,
-    rgba(255, 255, 255, 0.28) 50%,
-    rgba(255, 255, 255, 0.1) 75%
-  );
+  background: linear-gradient(90deg, #e5e7eb 25%, #d1d5db 50%, #e5e7eb 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite linear;
 }
 
 .skeleton--flag {

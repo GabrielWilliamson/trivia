@@ -103,7 +103,9 @@ COUNTRY_ES = {
 
 @register.filter
 def get_match(matches, match_id):
-    return matches.get(str(match_id))
+    if isinstance(matches, dict):
+        return matches.get(str(match_id))
+    return next((m for m in matches if str(m.get('id') if isinstance(m, dict) else m.id) == str(match_id)), None)
 
 
 @register.filter

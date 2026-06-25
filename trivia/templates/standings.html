@@ -97,62 +97,21 @@
         <div class="round-of-32 div31">
             {% include "components/match.html" with id="760501" stage="round-of-32" %} {# M87 #}
         </div>
+        <div class="div32 stage">Dieciseisavos de final</div>
+        <div class="div33 stage">Octavos de final</div>
+        <div class="div34 stage">Cuartos de final</div>
+        <div class="div35 stage">Semifinal</div>
+        <div class="div36 stage">Final</div>
+        <div class="div37 stage">Semifinal</div>
+        <div class="div38 stage">Cuartos de final</div>
+        <div class="div39 stage">Octavos de final</div>
+        <div class="div40 stage">Dieciseisavos de final</div>
+        <div class="div41 heading">Predicciones del mundial - Diario Democracia</div>
     </div>
 </section>
 
 <section class="lb-page">
-    <div class="lb-card">
-        <h1 class="lb-title">Tabla de posiciones</h1>
-
-        {% if leaderboard %}
-        <div class="table-wrap">
-            <table class="lb-table">
-                <thead>
-                    <tr>
-                        <th class="col-rank">#</th>
-                        <th class="col-user">Usuario</th>
-                        <th class="col-pts">Pts</th>
-                        <th class="col-stat" title="Marcador exacto">Exactos</th>
-                        <th class="col-stat" title="Resultado correcto">Result.</th>
-                        <th class="col-stat" title="Partidos evaluados / predichos">Jugados</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in leaderboard %}
-                    <tr class="{% if forloop.first %}row--first{% endif %}">
-                        <td class="col-rank">
-                            {% if forloop.counter == 1 %}
-                            <span class="medal medal--1">1</span>
-                            {% elif forloop.counter == 2 %}
-                            <span class="medal medal--2">2</span>
-                            {% elif forloop.counter == 3 %}
-                            <span class="medal medal--3">3</span>
-                            {% else %}
-                            <span class="rank-num">{{ forloop.counter }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="col-user"><span class="username">{{ user.username }}</span></td>
-                        <td class="col-pts"><strong class="points">{{ user.points }}</strong></td>
-                        <td class="col-stat">
-                            <span class="stat-val {% if user.exact > 0 %}stat--exact{% endif %}">{{ user.exact }}
-                            </span>
-                        </td>
-                        <td class="col-stat"><span class="stat-val {% if user.result > 0 %}stat--result{% endif %}">
-                                {{ user.result }}
-                            </span></td>
-                        <td class="col-stat"><span class="stat-val">{{ user.scored }}/{{ user.predicted }}</span></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <p>Aún no hay predicciones registradas.</p>
-            <p class="empty-sub">Ingresa a un partido desde el cuadro y registra tu predicción.</p>
-        </div>
-        {% endif %}
-    </div>
+    {% include "components/leaderboard.html" %}
 </section>
 
 

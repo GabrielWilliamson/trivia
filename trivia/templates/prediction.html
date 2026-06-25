@@ -25,7 +25,7 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
         {% endif %}
 
         <div class="readonly-block">
-            <p class="readonly-label">Tu predicción — <strong>{{ request.user.username }}</strong></p>
+            <p class="">Tu predicción</p>
             <div class="readonly-score">
                 <div class="rs-team">
                     <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name|translate_country }}">
@@ -74,8 +74,6 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
         <div class="error-banner">{{ error }}</div>
         {% endif %}
 
-        <p class="readonly-label">Prediciendo como <strong>{{ request.user.username }}</strong></p>
-
         <form class="prediction-form" method="post">
             {% csrf_token %}
 
@@ -111,10 +109,8 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
             </ul>
             <div class="scoring-rules">
                 <p class="scoring-title">Puntuación</p>
-                <div class="rule"><span class="pts pts--5">5 pts</span> Marcador exacto <em>(ej. predijiste 2–1 y fue
-                        2–1)</em></div>
-                <div class="rule"><span class="pts pts--2">2 pts</span> Ganador o empate correcto <em>(resultado bien,
-                        marcador diferente)</em></div>
+                <div class="rule"><span class="pts pts--5">5 pts</span> Marcador exacto </div>
+                <div class="rule"><span class="pts pts--2">2 pts</span> Ganador o empate correcto</div>
                 <div class="rule"><span class="pts pts--0">0 pts</span> Resultado incorrecto</div>
             </div>
         </div>
@@ -135,7 +131,6 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
         align-items: center;
         justify-content: center;
         background: #f5f5f5;
-        gap: 24px;
         padding: 32px 16px;
         font-family: sans-serif;
     }
@@ -335,13 +330,6 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
         gap: 14px;
     }
 
-    .readonly-label {
-        margin: 0;
-        font-size: 12px;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
 
     .readonly-score {
         display: flex;

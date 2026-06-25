@@ -1,0 +1,43 @@
+<div class="lb-card">
+    <h1 class="lb-title">Tabla de posiciones</h1>
+
+    {% if leaderboard %}
+    <div class="table-wrap">
+        <table class="lb-table">
+            <thead>
+                <tr>
+                    <th class="col-rank">#</th>
+                    <th class="col-user">Usuario</th>
+                    <th class="col-stat" title="Partidos evaluados / predichos">Jugados</th>
+                    <th class="col-pts">Pts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in leaderboard %}
+                <tr class="{% if forloop.first %}row--first{% endif %}">
+                    <td class="col-rank">
+                        {% if forloop.counter == 1 %}
+                        <span class="medal medal--1">1</span>
+                        {% elif forloop.counter == 2 %}
+                        <span class="medal medal--2">2</span>
+                        {% elif forloop.counter == 3 %}
+                        <span class="medal medal--3">3</span>
+                        {% else %}
+                        <span class="rank-num">{{ forloop.counter }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="col-user"><span class="username">{{ user.username }}</span></td>
+                    <td class="col-stat"><span class="stat-val">{{ user.scored }}/{{ user.predicted }}</span></td>
+                    <td class="col-pts"><strong class="points">{{ user.points }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Aún no hay predicciones registradas.</p>
+        <p class="empty-sub">Ingresa a un partido desde el cuadro y registra tu predicción.</p>
+    </div>
+    {% endif %}
+</div>

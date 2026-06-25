@@ -1,19 +1,20 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Iniciar sesión — Trivia Mundial 2026{% endblock %}
+{% block title %}Crear cuenta — Trivia Mundial 2026{% endblock %}
 
 {% block content %}
 <section class="login-page">
     <div class="login-card">
-        <h1 class="login-title">Iniciar sesión</h1>
+        <h1 class="login-title">Crear cuenta</h1>
 
         {% if form.errors %}
-        <div class="error-banner">Usuario o contraseña incorrectos. Inténtalo de nuevo.</div>
+        <div class="error-banner">
+            {% for field in form %}{% for error in field.errors %}{{ error }}{% endfor %}{% endfor %}
+        </div>
         {% endif %}
 
         <form method="post" class="login-form">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next }}">
 
             <div class="field-group">
                 <label class="field-label" for="id_username">Usuario</label>
@@ -24,13 +25,13 @@
             <div class="field-group">
                 <label class="field-label" for="id_password">Contraseña</label>
                 <input id="id_password" class="field-input" type="password" name="password"
-                    autocomplete="current-password" required>
+                    autocomplete="new-password" required>
             </div>
 
-            <button class="submit-btn" type="submit">Entrar</button>
+            <button class="submit-btn" type="submit">Crear cuenta</button>
         </form>
 
-        <p class="alt-link">¿No tenés cuenta? <a href="{% url 'register' %}">Crear una</a></p>
+        <p class="alt-link">¿Ya tenés cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
     </div>
 </section>
 
@@ -64,7 +65,6 @@
         color: #1a1a2e;
         text-align: center;
     }
-
 
     .error-banner {
         background: #fee2e2;

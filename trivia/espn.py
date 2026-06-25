@@ -23,7 +23,7 @@ LEAGUE_NAME = "FIFA World Cup"
 ESPN_API_BASE = "https://site.api.espn.com/apis/site/v2/sports/soccer"
 
 STAGE_DATE_RANGES: dict[str, list[str]] = {
-    "group-stage": ["20260624", "20260625", "20260626", "20260627"],
+    "group-stage": ["20260625", "20260626", "20260627"],
     "round-of-32": [
         "20260628",
         "20260629",

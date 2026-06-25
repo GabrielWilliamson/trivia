@@ -15,49 +15,7 @@
                 <h2 class="group-name">{{ group_name }}</h2>
                 <div class="group-matches">
                     {% for match in matches %}
-                    <a href="/prediction/{{ match.id }}" class="match-tile{% if match.state == 'in' %} match-tile--live{% elif match.state == 'post' %} match-tile--finished{% endif %}{% if match.id in predicted_ids %} match-tile--predicted{% endif %}">
-                        <div class="mt-teams">
-                            <div class="mt-team mt-team--home">
-                                {% if match.home.logo %}
-                                <img class="mt-flag" src="{{ match.home.logo }}" alt="{{ match.home.name|translate_country }}">
-                                {% endif %}
-                                <span class="mt-name">{{ match.home.name|translate_country }}</span>
-                            </div>
-
-                            <div class="mt-center">
-                                {% if match.state == 'post' %}
-                                <span class="mt-score">{{ match.home.score }}–{{ match.away.score }}</span>
-                                {% elif match.state == 'in' %}
-                                <div class="mt-live-score">
-                                    <span class="live-dot"></span>
-                                    <span class="mt-score mt-score--live">{{ match.home.score }}–{{ match.away.score }}</span>
-                                </div>
-                                {% else %}
-                                <span class="mt-vs">vs</span>
-                                {% endif %}
-                            </div>
-
-                            <div class="mt-team mt-team--away">
-                                <span class="mt-name">{{ match.away.name|translate_country }}</span>
-                                {% if match.away.logo %}
-                                <img class="mt-flag" src="{{ match.away.logo }}" alt="{{ match.away.name|translate_country }}">
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="mt-footer">
-                            {% if match.state == 'in' %}
-                            <span class="mt-badge mt-badge--live">En juego · {{ match.minute }}</span>
-                            {% elif match.state == 'post' %}
-                            <span class="mt-badge mt-badge--finished">Finalizado</span>
-                            {% elif match.date_display %}
-                            <span class="mt-badge mt-badge--pre">{{ match.date_display }}</span>
-                            {% endif %}
-                            {% if match.id in predicted_ids %}
-                            <span class="mt-star" title="Ya tienes predicción">★</span>
-                            {% endif %}
-                        </div>
-                    </a>
+                    {% include "components/match.html" with id=match.id stage="group" matches=matches predictions=predicted_ids %}
                     {% endfor %}
                 </div>
             </div>
@@ -81,7 +39,7 @@
     }
 
     .groups-container {
-        max-width: 960px;
+        max-width: 1024px;
         margin: 0 auto;
     }
 
@@ -95,201 +53,29 @@
 
     .groups-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
     }
 
-    .group-card {
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-        overflow: hidden;
-    }
 
     .group-name {
         font-size: 12px;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        color: #fff;
-        background: #005d7d;
-        padding: 10px 16px;
-        margin: 0;
     }
 
     .group-matches {
         display: flex;
         flex-direction: column;
-    }
-
-    /* Match tile */
-    .match-tile {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: 12px 16px;
-        text-decoration: none;
-        color: inherit;
-        border-bottom: 1px solid #f1f5f9;
-        transition: background 0.12s ease;
-    }
-
-    .match-tile:last-child {
-        border-bottom: none;
-    }
-
-    .match-tile:hover {
-        background: #f8fafc;
-    }
-
-    .match-tile--live {
-        background: #fff7ed;
-    }
-
-    .match-tile--live:hover {
-        background: #fff3e0;
-    }
-
-    .match-tile--finished {
-        opacity: 0.75;
-    }
-
-    /* Teams row */
-    .mt-teams {
-        display: flex;
-        align-items: center;
         gap: 8px;
+        margin: 10px
     }
 
-    .mt-team {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        flex: 1;
-    }
-
-    .mt-team--home {
-        justify-content: flex-end;
-        text-align: right;
-    }
-
-    .mt-team--away {
-        justify-content: flex-start;
-    }
-
-    .mt-flag {
-        width: 28px;
-        height: 20px;
-        object-fit: cover;
-        border-radius: 3px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-        flex-shrink: 0;
-    }
-
-    .mt-name {
-        font-size: 12px;
-        font-weight: 700;
-        color: #1a1a2e;
-        line-height: 1.2;
-        max-width: 80px;
-    }
-
-    .mt-team--home .mt-name {
-        text-align: right;
-    }
-
-    /* Center: vs / score */
-    .mt-center {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 40px;
-    }
-
-    .mt-vs {
-        font-size: 11px;
-        font-weight: 700;
-        color: #cbd5e1;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-    }
-
-    .mt-score {
-        font-size: 15px;
-        font-weight: 800;
-        color: #1a1a2e;
-        letter-spacing: 0.04em;
-        white-space: nowrap;
-    }
-
-    .mt-score--live {
-        color: #c2410c;
-    }
-
-    .mt-live-score {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-    }
-
-    /* Footer */
-    .mt-footer {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .mt-badge {
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        padding: 2px 8px;
-        border-radius: 20px;
-    }
-
-    .mt-badge--pre {
-        color: #64748b;
-        background: #f1f5f9;
-    }
-
-    .mt-badge--live {
-        color: #c2410c;
-        background: #fff7ed;
-        border: 1px solid #fed7aa;
-    }
-
-    .mt-badge--finished {
-        color: #64748b;
-        background: #f1f5f9;
-    }
-
-    /* Live dot */
-    .live-dot {
-        display: inline-block;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #ef4444;
-        animation: pulse 1.2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    .mt-star {
-        font-size: 13px;
-        color: #f59e0b;
-        margin-left: 6px;
-        line-height: 1;
-    }
-
-    .match-tile--predicted .mt-teams {
-        position: relative;
+    .match--group {
+        width: 90px;
+        background: #1d3557;
+        padding: 10px 12px;
     }
 
     .empty-state {

@@ -158,7 +158,12 @@ class StandingsView(TemplateView):
                 pass
 
         ctx["matches"] = all_matches
-        ctx["predictions"] = set(Prediction.objects.values_list("match_id", flat=True))
+        if self.request.user.is_authenticated:
+            ctx["predictions"] = set(
+                Prediction.objects.filter(user=self.request.user).values_list("match_id", flat=True)
+            )
+        else:
+            ctx["predictions"] = set()
 
         user_stats: dict[str, dict] = {}
         for pred in Prediction.objects.select_related("user").filter(

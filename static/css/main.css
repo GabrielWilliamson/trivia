@@ -1,6 +1,9 @@
 * {
   font-family: sans-serif;
-  /* background-color: rgb(234, 238, 241); */
+}
+
+body {
+    background-color: rgb(234, 238, 241);
 }
 
 .page-hero {

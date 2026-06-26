@@ -1,7 +1,7 @@
 {% load trivia_tags %}
 {% with match=matches|get_match:id %}
-<a class="match match--{{ stage }}{% if match.state == 'post' %} match--played{% endif %}{% if match.state == 'in' %} match--live{% endif %}"
-    href="/prediction/{{ id }}">
+<a class="match match--{{ stage }}{% if match.state == 'post' %} match--played{% endif %}{% if match.state == 'in' %} match--live{% endif %}{% if not match.teamsConfirmed %} match--tbd{% endif %}"
+    {% if match.teamsConfirmed %}href="/prediction/{{ id }}"{% endif %}>
 
     {% if predictions|has_prediction:id %}
     <span class="match__star">★</span>

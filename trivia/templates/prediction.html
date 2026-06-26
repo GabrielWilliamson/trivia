@@ -2,69 +2,108 @@
 {% load trivia_tags %}
 
 {% block title %}
-Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|translate_country }}
+Predicción — {{ match.home.name }} vs {{ match.away.name }}
 {% endblock %}
 
 {% block content %}
 <section class="prediction-page">
     <div class="prediction-card">
-        <p class="title-stage">{{ match.stage|translate_stage }}</p>
+        <p class="title-stage">{{ match.stage }}</p>
 
-        {% if existing %}
+        {% if existing and match_started %}
 
-        {% if saved %}
-        <div class="success-banner">
-            ¡Predicción guardada! Ya no puedes modificarla.
-        </div>
-        {% elif already_saved %}
         <div class="locked-banner">
             <span class="locked-icon">🔒</span>
-            <span>Ya tienes una predicción registrada para este partido. <strong>No es posible
-                    modificarla.</strong></span>
+            <span>El partido ya comenzó. <strong>No es posible modificar la predicción.</strong></span>
         </div>
-        {% endif %}
 
         <div class="readonly-block">
             <p class="">Tu predicción</p>
             <div class="readonly-score">
                 <div class="rs-team">
-                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name|translate_country }}">
-                    <span class="team-name">{{ match.home.name|translate_country }}</span>
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name }}">
+                    <span class="team-name">{{ match.home.name }}</span>
                 </div>
                 <span class="rs-value">{{ existing.home_score }}</span>
                 <span class="separator">–</span>
                 <span class="rs-value">{{ existing.away_score }}</span>
                 <div class="rs-team rs-team--away">
-                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name|translate_country }}">
-                    <span class="team-name">{{ match.away.name|translate_country }}</span>
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name }}">
+                    <span class="team-name">{{ match.away.name }}</span>
                 </div>
             </div>
         </div>
 
         {% elif match.state == 'post' %}
         <div class="finished-banner">
-            <span class="finished-score">
-                {{ match.home.abbreviation }} {{ match.home.score }} – {{ match.away.score }}
-                {{ match.away.abbreviation }}
-            </span>
+            <div class="banner-teams">
+                <div class="banner-team">
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name }}">
+                    <span class="team-name">{{ match.home.name }}</span>
+                </div>
+                <span class="finished-score">{{ match.home.score }} – {{ match.away.score }}</span>
+                <div class="banner-team banner-team--away">
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name }}">
+                    <span class="team-name">{{ match.away.name }}</span>
+                </div>
+            </div>
             <span class="finished-label">Este partido ya finalizó. No se pueden crear predicciones.</span>
         </div>
+        {% if existing %}
+        <div class="readonly-block">
+            <p class="">Esta es tu predicción — Fase de Grupos</p>
+            <div class="readonly-score">
+                <div class="rs-team">
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name }}">
+                    <span class="team-name">{{ match.home.name }}</span>
+                </div>
+                <span class="rs-value">{{ existing.home_score }}</span>
+                <span class="separator">–</span>
+                <span class="rs-value">{{ existing.away_score }}</span>
+                <div class="rs-team rs-team--away">
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name }}">
+                    <span class="team-name">{{ match.away.name }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
         {% elif match.state == 'in' %}
         <div class="live-banner">
-            <span class="live-dot"></span>
-            <span class="live-score">
-                {{ match.home.abbreviation }} {{ match.home.score }} – {{ match.away.score }}
-                {{ match.away.abbreviation }}
-            </span>
+            <div class="banner-teams">
+                <div class="banner-team">
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name }}">
+                    <span class="team-name">{{ match.home.name }}</span>
+                </div>
+                <span class="live-score">
+                    <span class="live-dot"></span>
+                    {{ match.home.score }} – {{ match.away.score }}
+                </span>
+                <div class="banner-team banner-team--away">
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name }}">
+                    <span class="team-name">{{ match.away.name }}</span>
+                </div>
+            </div>
             <span class="live-label">Partido en juego. No se pueden crear predicciones.</span>
         </div>
-
-        {% elif not match.teamsConfirmed %}
-        <div class="tbd-banner">
-
-            Equipos por definir
+        {% if existing %}
+        <div class="readonly-block">
+            <p class="">Esta es tu predicción — Fase de Grupos</p>
+            <div class="readonly-score">
+                <div class="rs-team">
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name }}">
+                    <span class="team-name">{{ match.home.name }}</span>
+                </div>
+                <span class="rs-value">{{ existing.home_score }}</span>
+                <span class="separator">–</span>
+                <span class="rs-value">{{ existing.away_score }}</span>
+                <div class="rs-team rs-team--away">
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name }}">
+                    <span class="team-name">{{ match.away.name }}</span>
+                </div>
+            </div>
         </div>
+        {% endif %}
 
         {% else %}
 
@@ -74,28 +113,35 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
         <div class="error-banner">{{ error }}</div>
         {% endif %}
 
+
         <form class="prediction-form" method="post">
             {% csrf_token %}
 
             <div class="teams">
                 <div class="team-block team-block--home">
-                    <span class="team-name">{{ match.home.name|translate_country }}</span>
-                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name|translate_country }}">
+                    <span class="team-name">{{ match.home.name }}</span>
+                    <img class="flag" src="{{ match.home.logo }}" alt="{{ match.home.name }}">
                     <input class="score-input" type="number" name="home_score" min="0" max="99" placeholder="0"
-                        required>
+                        value="{{ existing.home_score }}" required>
                 </div>
 
                 <span class="separator">–</span>
 
                 <div class="team-block team-block--away">
                     <input class="score-input" type="number" name="away_score" min="0" max="99" placeholder="0"
-                        required>
-                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name|translate_country }}">
-                    <span class="team-name">{{ match.away.name|translate_country }}</span>
+                        value="{{ existing.away_score }}" required>
+                    <img class="flag" src="{{ match.away.logo }}" alt="{{ match.away.name }}">
+                    <span class="team-name">{{ match.away.name }}</span>
                 </div>
             </div>
 
-            <button class="submit-btn" type="submit">Guardar predicción</button>
+            <button class="submit-btn" type="submit">
+                {% if existing %}
+                Actualizar predicción
+                {% else %}
+                Guardarpredicción
+                {% endif %}
+            </button>
         </form>
 
 
@@ -339,6 +385,18 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
         flex-shrink: 0;
     }
 
+    .edit-banner {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e40af;
+        border-radius: 8px;
+        padding: 12px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+    }
+
     .error-banner {
         background: #fee2e2;
         color: #991b1b;
@@ -548,6 +606,41 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
 
 
     /* Finished banner */
+    .banner-teams {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .banner-team {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+    }
+
+    .banner-team--away {
+        align-items: center;
+    }
+
+    .banner-team .flag {
+        width: 44px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .banner-team .team-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #1a1a2e;
+        text-align: center;
+    }
+
     .finished-banner {
         background: #f1f5f9;
         border: 1px solid #e2e8f0;

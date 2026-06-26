@@ -539,6 +539,12 @@ body {
   transform: scale(1.03);
 }
 
+.match--tbd {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .match--round-of-32 {
   background: white;
   width: 100%;

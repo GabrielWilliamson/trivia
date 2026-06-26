@@ -1,5 +1,4 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from datetime import datetime, timezone, timedelta
 from django import forms
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView, View
 from django.views.generic.base import TemplateResponseMixin
 
-from trivia.espn import fetch_stage_matches, fetch_match_by_id, fetch_group_map
+from trivia.espn import fetch_event_by_id, fetch_all_known_matches, fetch_group_map
 
 
 class RegisterForm(forms.Form):
@@ -42,7 +41,7 @@ class RegisterView(View):
         return render(request, "registration/register.html", {"form": form})
 
 
-DISPLAY_TZ = ZoneInfo("America/Guatemala")
+DISPLAY_TZ = timezone(timedelta(hours=-3))  # Argentina (UTC-3)
 
 
 STAGE_ORDER = [
@@ -77,36 +76,28 @@ class PredictionView(LoginRequiredMixin, TemplateResponseMixin, View):
     template_name = "prediction.html"
 
     def _get_match_or_404(self, match_id: str) -> dict:
-        match = fetch_match_by_id(match_id)
+        match = fetch_event_by_id(match_id)
         if match is None:
-            raise Http404(f"Match {match_id} not found")
+            raise Http404(f"Partido {match_id} no encontrado")
         return match
 
     def get(self, request, match_id: str):
         from trivia.models import Prediction
+        from django.shortcuts import redirect
 
         match = self._get_match_or_404(match_id)
+        if not match.get("teamsConfirmed", True):
+            return redirect("/")
         existing = Prediction.objects.filter(
             match_id=match_id, user=request.user
         ).first()
-        return self.render_to_response({"match": match, "existing": existing})
+        match_started = match.get("state") in ("in", "post")
+        return self.render_to_response({"match": match, "existing": existing, "match_started": match_started})
 
     def post(self, request, match_id: str):
         from trivia.models import Prediction
 
         match = self._get_match_or_404(match_id)
-
-        existing = Prediction.objects.filter(
-            match_id=match_id, user=request.user
-        ).first()
-        if existing:
-            return self.render_to_response(
-                {
-                    "match": match,
-                    "existing": existing,
-                    "already_saved": True,
-                }
-            )
 
         if not match.get("teamsConfirmed", True):
             return self.render_to_response(
@@ -129,12 +120,20 @@ class PredictionView(LoginRequiredMixin, TemplateResponseMixin, View):
                 {"match": match, "error": "Marcadores inválidos."}
             )
 
-        Prediction.objects.create(
-            match_id=match_id,
-            user=request.user,
-            home_score=home_score,
-            away_score=away_score,
-        )
+        existing = Prediction.objects.filter(
+            match_id=match_id, user=request.user
+        ).first()
+        if existing:
+            existing.home_score = home_score
+            existing.away_score = away_score
+            existing.save()
+        else:
+            Prediction.objects.create(
+                match_id=match_id,
+                user=request.user,
+                home_score=home_score,
+                away_score=away_score,
+            )
         return redirect("/")
 
 
@@ -146,16 +145,8 @@ class StandingsView(TemplateView):
 
         ctx = super().get_context_data(**kwargs)
 
-        all_matches: dict = {}
-        finished_matches: dict = {}
-        for stage in STAGE_ORDER:
-            try:
-                for m in fetch_stage_matches(stage):
-                    all_matches[m["id"]] = m
-                    if m.get("state") == "post":
-                        finished_matches[m["id"]] = m
-            except Exception:
-                pass
+        all_matches = fetch_all_known_matches()
+        finished_matches = {mid: m for mid, m in all_matches.items() if m.get("state") == "post"}
 
         ctx["matches"] = all_matches
         if self.request.user.is_authenticated:
@@ -236,7 +227,8 @@ class GroupsView(LoginRequiredMixin, TemplateView):
         from trivia.models import Prediction
 
         ctx = super().get_context_data(**kwargs)
-        matches = fetch_stage_matches("group-stage")
+        all_matches = fetch_all_known_matches()
+        matches = [m for m in all_matches.values() if m.get("stage") == "Fase de Grupos"]
         group_map = fetch_group_map()
         for match in matches:
             match["date_display"] = _fmt_match_date(match.get("date", ""))

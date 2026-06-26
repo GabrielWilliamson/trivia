@@ -1,8 +1,8 @@
 """
-ESPN public API v2 — FIFA World Cup 2026 data pipeline.
+ESPN API pública v2 — pipeline de datos FIFA World Cup 2026.
 
-Endpoint:
-  https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=YYYYMMDD
+Endpoint principal:
+  https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event={id}&lang=es
 """
 
 import json
@@ -13,44 +13,49 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 LEAGUE_CODE = "fifa.world"
 LEAGUE_NAME = "FIFA World Cup"
-ESPN_API_BASE = "https://site.api.espn.com/apis/site/v2/sports/soccer"
+ESPN_EVENT_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/{league}/summary?event={event_id}&lang=es&region=es"
 
-STAGE_DATE_RANGES: dict[str, list[str]] = {
-    "group-stage": ["20260625", "20260626", "20260627"],
-    "round-of-32": [
-        "20260628",
-        "20260629",
-        "20260630",
-        "20260701",
-        "20260702",
-        "20260703",
-    ],
-    "round-of-16": ["20260704", "20260705", "20260706", "20260707"],
-    "quarterfinals": ["20260709", "20260710", "20260711"],
-    "semifinals": ["20260714", "20260715"],
-    "third-place": ["20260718"],
-    "final": ["20260719"],
-}
+KNOWN_MATCH_IDS: list[str] = [
+    # Fase de grupos
+    "760468", "760469", "760470", "760471",
+    "760472", "760473", "760474", "760475",
+    "760476", "760477", "760478", "760479",
+    "760480", "760481", "760482", "760483",
+    "760484", "760485",
+    # Dieciseisavos de final
+    "760486", "760487", "760488", "760489",
+    "760490", "760491", "760492", "760493",
+    "760494", "760495", "760496", "760497",
+    "760498", "760499", "760500", "760501",
+    # Octavos de final
+    "760502", "760503", "760504", "760505",
+    "760506", "760507", "760508", "760509",
+    # Cuartos de final
+    "760510", "760511", "760512", "760513",
+    # Semifinales
+    "760514", "760515",
+    # Final
+    "760517",
+]
 
-STAGE_LABELS: dict[str, str] = {
-    "group-stage": "Group Stage",
-    "round-of-32": "Round of 32",
-    "round-of-16": "Round of 16",
-    "quarterfinals": "Quarterfinals",
-    "quarter-finals": "Quarterfinals",
-    "semifinals": "Semifinals",
-    "semi-finals": "Semifinals",
-    "final": "Final",
+SEASON_TYPE_LABELS: dict[int, str] = {
+    13802: "Fase de Grupos",
+    13801: "Dieciseisavos de Final",
+    13800: "Octavos de Final",
+    13799: "Cuartos de Final",
+    13798: "Semifinales",
+    13803: "Final",
 }
 
 NAME_OVERRIDES: dict[str, str] = {
-    "Czechia": "Czech Republic",
+    "Chequia": "República Checa",
     "Curacao": "Curaçao",
+    "República Democrática del Congo": "Congo",
 }
 
 
 # ---------------------------------------------------------------------------
-# Primitive helpers
+# Helpers primitivos
 # ---------------------------------------------------------------------------
 def _str(v: object) -> str | None:
     return v if isinstance(v, str) else None
@@ -69,7 +74,7 @@ def _arr(v: object) -> list:
 
 
 # ---------------------------------------------------------------------------
-# Status helpers
+# Helpers de estado
 # ---------------------------------------------------------------------------
 def _normalize_status(raw: str) -> str:
     return raw.replace("STATUS_", "").replace("_", " ").lower()
@@ -81,7 +86,6 @@ def _is_paused(detail: str) -> bool:
 
 
 def _is_tbd_team(team: dict) -> bool:
-    """Teams not yet determined have abbreviations starting with a digit (e.g. '2A', '1C', '3RD')."""
     return bool(re.match(r"^\d", team.get("abbreviation", "")))
 
 
@@ -93,7 +97,7 @@ def _in_penalties(status: str, detail: str, hs, aws) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Clock helpers
+# Helpers de reloj
 # ---------------------------------------------------------------------------
 def _parse_clock(display: str, period: int) -> int:
     m = re.match(r"^(\d+)'(?:\+(\d+)')?$", display)
@@ -103,11 +107,11 @@ def _parse_clock(display: str, period: int) -> int:
 
 
 def _fmt_minute(period: int) -> str:
-    return f"{period}H" if period > 0 else "Live"
+    return f"{period}T" if period > 0 else "En vivo"
 
 
 # ---------------------------------------------------------------------------
-# Team parser
+# Parser de equipo
 # ---------------------------------------------------------------------------
 def _parse_team(competitor: dict) -> dict:
     team = _rec(competitor.get("team")) or {}
@@ -116,15 +120,13 @@ def _parse_team(competitor: dict) -> dict:
         _str(team.get("logo"))
         or next(
             (
-                _str(l.get("href"))
-                for l in logos
-                if isinstance(l, dict) and "default" in _arr(l.get("rel"))
+                _str(logo_entry.get("href"))
+                for logo_entry in logos
+                if isinstance(logo_entry, dict) and "default" in _arr(logo_entry.get("rel"))
             ),
             None,
         )
-        or (
-            _str(logos[0].get("href")) if logos and isinstance(logos[0], dict) else None
-        )
+        or (_str(logos[0].get("href")) if logos and isinstance(logos[0], dict) else None)
         or ""
     )
     raw = (
@@ -162,7 +164,7 @@ def _parse_team(competitor: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Match parser
+# Parser de partido
 # ---------------------------------------------------------------------------
 def _parse_match(event: dict, clock_ts: int) -> dict | None:
     comp = next(iter(_arr(event.get("competitions"))), None)
@@ -178,7 +180,7 @@ def _parse_match(event: dict, clock_ts: int) -> dict | None:
 
     state = _str(st.get("state")) or ""
     status_name = _normalize_status(
-        _str(st.get("name")) or _str(st.get("description")) or "unknown"
+        _str(st.get("name")) or _str(st.get("description")) or "desconocido"
     )
     display_clock = _str(status.get("displayClock")) or ""
     detail = _str(st.get("shortDetail")) or _str(st.get("detail")) or ""
@@ -196,17 +198,13 @@ def _parse_match(event: dict, clock_ts: int) -> dict | None:
         status_name, detail, home.get("shootoutScore"), away.get("shootoutScore")
     )
 
-    season_slug = _str((_rec(event.get("season")) or {}).get("slug")) or ""
-    stage = STAGE_LABELS.get(season_slug, season_slug)
+    season_type = (_rec(event.get("season")) or {}).get("type")
+    stage = SEASON_TYPE_LABELS.get(season_type, "")
 
     notes = _arr(comp.get("notes"))
     bracket_note = (
         next(
-            (
-                _str(n.get("headline"))
-                for n in notes
-                if isinstance(n, dict) and n.get("headline")
-            ),
+            (_str(n.get("headline")) for n in notes if isinstance(n, dict) and n.get("headline")),
             None,
         )
         or _str(event.get("shortName"))
@@ -251,65 +249,61 @@ def _fetch_json(url: str) -> dict:
         return json.loads(resp.read())
 
 
-def _fetch_date(date: str, stage_key: str, clock_ts: int) -> list[dict]:
-    url = f"{ESPN_API_BASE}/{LEAGUE_CODE}/scoreboard?dates={date}&lang=en&region=us"
-    data = _fetch_json(url)
-    matches = []
-    for event in _arr(data.get("events")):
-        if not isinstance(event, dict):
-            continue
-        slug = (_rec(event.get("season")) or {}).get("slug", "")
-        if slug != stage_key:
-            continue
-        m = _parse_match(event, clock_ts)
-        if m:
-            matches.append(m)
-    return matches
+def _fetch_event(event_id: str, clock_ts: int) -> tuple[str, dict | None]:
+    url = ESPN_EVENT_URL.format(league=LEAGUE_CODE, event_id=event_id)
+    try:
+        data = _fetch_json(url)
+        header = _rec(data.get("header")) or {}
+        competitions = _arr(header.get("competitions"))
+        if not competitions or not isinstance(competitions[0], dict):
+            return event_id, None
+        comp = competitions[0]
+        event = {
+            "id": str(event_id),
+            "date": _str(comp.get("date")) or _str(header.get("date")) or "",
+            "shortName": _str(header.get("shortName")) or "",
+            "season": _rec(header.get("season")) or {},
+            "competitions": [comp],
+            "status": _rec(comp.get("status")) or {},
+        }
+        return event_id, _parse_match(event, clock_ts)
+    except Exception:
+        return event_id, None
 
 
 # ---------------------------------------------------------------------------
-# Public API
+# API pública
 # ---------------------------------------------------------------------------
-def fetch_match_by_id(match_id: str) -> dict | None:
-    """Search all stages for a match with the given ID."""
-    for stage_key in STAGE_DATE_RANGES:
-        try:
-            for m in fetch_stage_matches(stage_key):
-                if m["id"] == match_id:
-                    return m
-        except Exception:
-            pass
-    return None
+def fetch_event_by_id(event_id: str) -> dict | None:
+    """Obtiene un partido directamente por su ID de ESPN."""
+    _, match = _fetch_event(event_id, int(time.time() * 1000))
+    return match
 
 
-def fetch_stage_matches(stage_key: str) -> list[dict]:
-    """Fetch all matches for a given knockout stage from the ESPN API."""
-    dates = STAGE_DATE_RANGES.get(stage_key, [])
+def fetch_all_known_matches() -> dict[str, dict]:
+    """Obtiene en paralelo todos los partidos conocidos. Retorna {match_id: match_data}."""
     clock_ts = int(time.time() * 1000)
-    seen: set[str] = set()
-    all_matches: list[dict] = []
+    results: dict[str, dict] = {}
 
-    with ThreadPoolExecutor(max_workers=min(len(dates), 6)) as pool:
-        futures = {pool.submit(_fetch_date, d, stage_key, clock_ts): d for d in dates}
+    with ThreadPoolExecutor(max_workers=10) as pool:
+        futures = {pool.submit(_fetch_event, eid, clock_ts): eid for eid in KNOWN_MATCH_IDS}
         for fut in as_completed(futures):
             try:
-                for m in fut.result():
-                    if m["id"] not in seen:
-                        seen.add(m["id"])
-                        all_matches.append(m)
+                eid, match = fut.result()
+                if match:
+                    results[eid] = match
             except Exception:
                 pass
 
-    all_matches.sort(key=lambda m: m["date"])
-    return all_matches
+    return results
 
 
 _ESPN_API_V2 = "https://site.api.espn.com/apis/v2/sports/soccer"
 
 
 def fetch_group_map() -> dict[str, str]:
-    """Return {team_id: group_name} from the ESPN standings endpoint."""
-    url = f"{_ESPN_API_V2}/{LEAGUE_CODE}/standings?lang=en&region=us"
+    """Retorna {team_id: nombre_grupo} desde el endpoint de posiciones de ESPN."""
+    url = f"{_ESPN_API_V2}/{LEAGUE_CODE}/standings?lang=es&region=es"
     try:
         data = _fetch_json(url)
     except Exception:

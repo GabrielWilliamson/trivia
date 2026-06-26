@@ -8,7 +8,7 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
 {% block content %}
 <section class="prediction-page">
     <div class="prediction-card">
-        <p class="">{{ match.stage|translate_stage }}</p>
+        <p class="title-stage">{{ match.stage|translate_stage }}</p>
 
         {% if existing %}
 
@@ -114,9 +114,7 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
                 <div class="rule"><span class="pts pts--0">0 pts</span> Resultado incorrecto</div>
             </div>
             <div class="tiebreak-rules">
-                <p class="scoring-title">Desempate</p>
-                <p>Si dos jugadores tienen los mismos puntos, gana quien tenga <strong>menor error de goles acumulado</strong>.</p>
-                <p class="tiebreak-example">Ejemplo: predijiste 3–1 pero el resultado fue 1–0. Tu error es |3−1| + |1−0| = <strong>3 goles</strong>. Cuanto más cerca estés del marcador real, mejor tu posición.</p>
+                <p class="scoring-title">Nota</p>Cuanto más cerca estés del marcador real, mejor tu posición.</p>
             </div>
         </div>
 
@@ -129,6 +127,12 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
 </section>
 
 <style>
+    .title-stage {
+        font-size: 18px;
+        font-weight: 800;
+
+    }
+
     .prediction-page {
         min-height: 100vh;
         display: flex;

@@ -5,9 +5,11 @@
 <section class="standings">
     <div class="page-hero">
         <h1 class="page-hero__title">Predicciones del Mundial — Diario Democracia</h1>
-        <p class="page-hero__desc">Gana dos televisores: guardá tu pronóstico para cada partido a partir de los dieciseisavos de final.</p>
+        <p class="page-hero__desc">Gana dos televisores: guardá tu pronóstico para cada partido a partir de los
+            dieciseisavos de final.</p>
     </div>
     <div class="parent">
+
         <div class="round-of-32 div1">
             {% include "components/match.html" with id="760489" stage="round-of-32" %} {# M74 #}
         </div>
@@ -33,6 +35,7 @@
             {% include "components/match.html" with id="760493" stage="round-of-32" %} {# M82 #}
         </div>
         <div class="round-of-16 div9">
+            <p class="stage-label">Octavos de final</p>
             {% include "components/match.html" with id="760502" stage="round-of-16" %} {# M89 #}
         </div>
         <div class="round-of-16 div10">
@@ -45,27 +48,33 @@
             {% include "components/match.html" with id="760507" stage="round-of-16" %} {# M94 #}
         </div>
         <div class="quarter-final div13">
+            <p class="stage-label">Cuartos de final</p>
             {% include "components/match.html" with id="760510" stage="quarter-final" %} {# M97 #}
         </div>
         <div class="quarter-final div14">
             {% include "components/match.html" with id="760511" stage="quarter-final" %} {# M98 #}
         </div>
         <div class="semifinal div15">
+            <p class="stage-label">Semifinal</p>
             {% include "components/match.html" with id="760514" stage="semifinal" %} {# M101#}
         </div>
         <div class="final div16">
+            <p class="stage-label">Final</p>
             {% include "components/match.html" with id="760517" stage="final" %} {# M104 #}
         </div>
         <div class="semifinal div17">
+            <p class="stage-label">Semifinal</p>
             {% include "components/match.html" with id="760515" stage="semifinal" %} {# M102#}
         </div>
         <div class="quarter-final div18">
+            <p class="stage-label">Cuartos de final</p>
             {% include "components/match.html" with id="760512" stage="quarter-final" %} {# M99 #}
         </div>
         <div class="quarter-final div19">
             {% include "components/match.html" with id="760513" stage="quarter-final" %} {# M100 #}
         </div>
         <div class="round-of-16 div20">
+            <p class="stage-label">Octavos de final</p>
             {% include "components/match.html" with id="760504" stage="round-of-16" %} {# M91 #}
         </div>
         <div class="round-of-16 div21">
@@ -101,15 +110,11 @@
         <div class="round-of-32 div31">
             {% include "components/match.html" with id="760501" stage="round-of-32" %} {# M87 #}
         </div>
-        <div class="div32 stage">Dieciseisavos de final</div>
-        <div class="div33 stage">Octavos de final</div>
-        <div class="div34 stage">Cuartos de final</div>
-        <div class="div35 stage">Semifinal</div>
-        <div class="div36 stage">Final</div>
-        <div class="div37 stage">Semifinal</div>
-        <div class="div38 stage">Cuartos de final</div>
-        <div class="div39 stage">Octavos de final</div>
-        <div class="div40 stage">Dieciseisavos de final</div>
+
+        <div class="div32 stage-label-grid">Dieciseisavos de final</div>
+        <div class="div40 stage-label-grid">Dieciseisavos de final</div>
+
+
     </div>
 </section>
 

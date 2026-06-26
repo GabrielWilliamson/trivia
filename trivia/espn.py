@@ -3,20 +3,13 @@ ESPN public API v2 — FIFA World Cup 2026 data pipeline.
 
 Endpoint:
   https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=YYYYMMDD
-
-Set USE_LOCAL_DATA=true in .env to load match data from trivia/data/<stage>.json
-instead of hitting the ESPN API. Useful for local testing before the tournament.
 """
 
 import json
-import os
 import re
 import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
-
-DATA_DIR = Path(__file__).resolve().parent / "data"
 
 LEAGUE_CODE = "fifa.world"
 LEAGUE_NAME = "FIFA World Cup"
@@ -275,27 +268,6 @@ def _fetch_date(date: str, stage_key: str, clock_ts: int) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# Local data loader
-# ---------------------------------------------------------------------------
-def _use_local_data() -> bool:
-    return os.environ.get("USE_LOCAL_DATA", "").lower() in ("1", "true", "yes")
-
-
-def _load_local_stage(stage_key: str) -> list[dict] | None:
-    """Load matches from a local JSON file when USE_LOCAL_DATA is enabled."""
-    if not _use_local_data():
-        return None
-    path = DATA_DIR / f"{stage_key}.json"
-    if not path.exists():
-        return None
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return data.get("matches", [])
-    except Exception:
-        return None
-
-
-# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 def fetch_match_by_id(match_id: str) -> dict | None:
@@ -311,15 +283,7 @@ def fetch_match_by_id(match_id: str) -> dict | None:
 
 
 def fetch_stage_matches(stage_key: str) -> list[dict]:
-    """Fetch all matches for a given knockout stage.
-
-    When USE_LOCAL_DATA=true, reads from trivia/data/<stage_key>.json instead
-    of the ESPN API. Useful for testing with simulated match results.
-    """
-    local = _load_local_stage(stage_key)
-    if local is not None:
-        return local
-
+    """Fetch all matches for a given knockout stage from the ESPN API."""
     dates = STAGE_DATE_RANGES.get(stage_key, [])
     clock_ts = int(time.time() * 1000)
     seen: set[str] = set()

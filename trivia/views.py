@@ -178,6 +178,7 @@ class StandingsView(TemplateView):
                     "result": 0,
                     "predicted": 0,
                     "scored": 0,
+                    "goal_error": 0,
                 }
             user_stats[uname]["predicted"] += 1
             match = finished_matches.get(pred.match_id)
@@ -189,13 +190,19 @@ class StandingsView(TemplateView):
                 )
                 user_stats[uname]["points"] += pts
                 user_stats[uname]["scored"] += 1
+                user_stats[uname]["goal_error"] += (
+                    abs(pred.home_score - real_home) + abs(pred.away_score - real_away)
+                )
                 if pts == 5:
                     user_stats[uname]["exact"] += 1
                 elif pts == 2:
                     user_stats[uname]["result"] += 1
 
+        # Desempate: 1) más puntos, 2) más exactos, 3) menor error de goles acumulado
         ctx["leaderboard"] = sorted(
-            user_stats.values(), key=lambda u: u["points"], reverse=True
+            user_stats.values(),
+            key=lambda u: (u["points"], u["exact"], -u["goal_error"]),
+            reverse=True,
         )
         ctx["finished_count"] = len(finished_matches)
         return ctx

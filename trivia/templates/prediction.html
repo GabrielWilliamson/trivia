@@ -113,6 +113,11 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
                 <div class="rule"><span class="pts pts--2">2 pts</span> Ganador o empate correcto</div>
                 <div class="rule"><span class="pts pts--0">0 pts</span> Resultado incorrecto</div>
             </div>
+            <div class="tiebreak-rules">
+                <p class="scoring-title">Desempate</p>
+                <p>Si dos jugadores tienen los mismos puntos, gana quien tenga <strong>menor error de goles acumulado</strong>.</p>
+                <p class="tiebreak-example">Ejemplo: predijiste 3–1 pero el resultado fue 1–0. Tu error es |3−1| + |1−0| = <strong>3 goles</strong>. Cuanto más cerca estés del marcador real, mejor tu posición.</p>
+            </div>
         </div>
 
 
@@ -276,6 +281,26 @@ Predicción — {{ match.home.name|translate_country }} vs {{ match.away.name|tr
     .pts--0 {
         background: #f1f5f9;
         color: #64748b;
+    }
+
+    .tiebreak-rules {
+        border-top: 1px solid #bae6fd;
+        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .tiebreak-rules p {
+        margin: 0;
+        font-size: 12px;
+        color: #0c4a6e;
+        line-height: 1.5;
+    }
+
+    .tiebreak-example {
+        color: #0369a1 !important;
+        font-style: italic;
     }
 
     /* Banners */

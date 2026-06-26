@@ -9,6 +9,7 @@
                     <th class="col-rank">#</th>
                     <th class="col-user">Usuario</th>
                     <th class="col-stat" title="Partidos evaluados / predichos">Jugados</th>
+                    <th class="col-stat" title="Desacierto acumulado en goles (menor es mejor)">Desacierto</th>
                     <th class="col-pts">Pts</th>
                 </tr>
             </thead>
@@ -28,6 +29,7 @@
                     </td>
                     <td class="col-user"><span class="username">{{ user.username }}</span></td>
                     <td class="col-stat"><span class="stat-val">{{ user.scored }}/{{ user.predicted }}</span></td>
+                    <td class="col-stat"><span class="stat-val">{{ user.goal_error }}</span></td>
                     <td class="col-pts"><strong class="points">{{ user.points }}</strong></td>
                 </tr>
                 {% endfor %}

@@ -3,7 +3,7 @@
 }
 
 body {
-    background-color: rgb(234, 238, 241);
+  background-color: rgb(234, 238, 241);
 }
 
 .page-hero {
@@ -602,7 +602,7 @@ body {
 }
 
 .match .team__score {
-  border-radius: 2px
+  border-radius: 2px;
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.02em;

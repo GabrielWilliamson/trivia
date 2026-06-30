@@ -13,8 +13,7 @@
         <img src="{{ match.home.logo }}" alt="{{ match.home.name }}" title="{{ match.home.name }}">
         <span class="team__abbr">{{ match.home.abbreviation }}</span>
         {% if match.state == 'post' %}
-        <span class="team__score">{{ match.home.score }}{% if match.inPenalties %}<span class="team__pen">({{
-                match.home.shootoutScore }})</span>{% endif %}</span>
+        <span class="team__score">{{ match.home.score }}</span>{% if match.inPenalties %}<span class="team__pen">({{ match.home.shootoutScore }})</span>{% endif %}
         {% endif %}
     </div>
     {% else %}
@@ -24,18 +23,13 @@
     </div>
     {% endif %}
 
-    {% if match.inPenalties %}
-    <div class="match__badge--pen">PEN</div>
-    {% endif %}
-
     {% if match.away.name and match.away.logo %}
     <div
         class="team{% if match.state == 'post' and match.inPenalties and match.away.shootoutScore|gt:match.home.shootoutScore %} team--winner{% elif match.state == 'post' and not match.inPenalties and match.away.score|gt:match.home.score %} team--winner{% elif match.state == 'post' %} team--loser{% endif %}">
         <img src="{{ match.away.logo }}" alt="{{ match.away.name }}" title="{{ match.away.name }}">
         <span class="team__abbr">{{ match.away.abbreviation }}</span>
         {% if match.state == 'post' %}
-        <span class="team__score">{{ match.away.score }}{% if match.inPenalties %}<span class="team__pen">({{
-                match.away.shootoutScore }})</span>{% endif %}</span>
+        <span class="team__score">{{ match.away.score }}</span>{% if match.inPenalties %}<span class="team__pen">({{ match.away.shootoutScore }})</span>{% endif %}
         {% endif %}
     </div>
     {% else %}
